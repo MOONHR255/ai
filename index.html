@@ -3,69 +3,519 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AI Creative Agent</title>
+  <title>AI Creative Agent Team</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <script>
+    // 디자인 정하기: github.io 주소 + 올린 시각으로 8개 중 하나 (새로 올리면 바뀌고, 새로고침해도 그대로)
+    (function () {
+      var G = "https://fonts.googleapis.com/css2?display=swap&family=";
+      var J = "https://cdn.jsdelivr.net/gh/";
+      var FONTS = {
+        glass: [G + "Instrument+Serif:ital@0;1"],
+        noir: [G + "Geist:wght@400;500;600&family=Geist+Mono:wght@400;500"],
+        editorial: [G + "Hahmlet:wght@300;400;600&family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400"],
+        swiss: [J + "sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css", G + "Inter+Tight:wght@600;800;900&family=IBM+Plex+Mono:wght@400;500"],
+        terra: [G + "Gowun+Batang:wght@400;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400"],
+        bloom: [J + "wanteddev/wanted-sans@v1.0.3/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css", G + "Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800"],
+        pop: [G + "Space+Grotesk:wght@500;700"],
+        luxe: [G + "Noto+Serif+KR:wght@200;300;500&family=Bodoni+Moda:ital,wght@0,400;1,400"]
+      };
+      var keys = Object.keys(FONTS);
+      var host = location.hostname;
+      var asked = new URLSearchParams(location.search).get("design");
+      var lm = document.lastModified;
+      var seed = host + (Math.abs(Date.now() - Date.parse(lm)) > 3000 ? lm.slice(-2) : "");
+      var h = 0;
+      for (var i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
+      var d = keys.indexOf(asked) > -1 ? asked : /\.github\.io$/.test(host) ? keys[h % keys.length] : "";
+      if (!d) return;
+      document.documentElement.setAttribute("data-design", d);
+      FONTS[d].forEach(function (href) {
+        var link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = href;
+        document.head.appendChild(link);
+      });
+    })();
+  </script>
+  <style>
+    :root { --bg: #F4F4F5; --ink: #18181B; --muted: #6B6B74; --line: #D4D4D8; --card: #FFFFFF; --accent: #18181B; --accent-2: #8B8B94; --accent-soft: #ECECEF; --on-accent: #FFFFFF; --radius: 12px; --border: 1px dashed var(--line); --shadow: none; --blur: none; --grain: 0; --font-body: 'Pretendard Variable', -apple-system, sans-serif; --font-display: 'Pretendard Variable', -apple-system, sans-serif; --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace; --title-weight: 800; --title-tracking: -0.03em; --title-leading: 1.08; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--ink); line-height: 1.65; overflow-x: hidden; }
+    html[data-design] .preview-note { display: none; }
+    .preview-note { background: #18181B; color: #FFF; text-align: center; padding: 10px; font-size: 13px; font-weight: 600; }
+    header.nav { display: flex; align-items: center; justify-content: space-between; max-width: 1200px; margin: 0 auto; padding: 24px clamp(20px, 5vw, 64px); position: sticky; top: 0; background: var(--bg); z-index: 50; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; text-decoration: none; color: var(--ink); font-size: 18px; }
+    .brand small { font-weight: 500; color: var(--muted); font-size: 12px; }
+    .nav-links { display: flex; gap: 32px; list-style: none; font-size: 14px; font-weight: 500; }
+    .nav-links a { text-decoration: none; color: var(--muted); transition: color .2s; }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-cta { padding: 10px 20px; border-radius: 999px; background: var(--accent); color: var(--on-accent); text-decoration: none; font-size: 13px; font-weight: 600; }
+    section { padding: clamp(96px, 12vw, 168px) clamp(20px, 5vw, 64px); max-width: 1320px; margin: 0 auto; overflow-x: clip; position: relative; }
+    .hero { padding-top: 32px; }
+    .hero-title { font-family: var(--font-display); font-weight: var(--title-weight); font-size: clamp(40px, 6vw, 84px); letter-spacing: var(--title-tracking); line-height: var(--title-leading); margin-bottom: 24px; text-wrap: balance; word-break: keep-all; }
+    .hero-lead { font-size: clamp(17px, 2vw, 20px); color: var(--muted); max-width: 640px; margin-bottom: 40px; word-break: keep-all; }
+    .hero-meta { margin-top: 32px; font-size: 12px; font-family: var(--font-mono); color: var(--muted); display: flex; gap: 16px; flex-wrap: wrap; }
+    .chat-card { background: var(--card); border: var(--border); border-radius: var(--radius); box-shadow: var(--shadow); backdrop-filter: var(--blur); padding: 24px; display: flex; flex-direction: column; width: 100%; max-width: 860px; margin: 0 auto; position: relative; }
+    .chat-card > * { flex: none; }
+    .chat-card > #webchat { height: 200px; min-height: 0; }
+    body.is-started .chat-card { height: calc(100svh - 112px); max-width: 1000px; }
+    body.is-started .chat-card > #webchat { flex: 1 1 0; height: auto; min-height: 0; }
+    .chat-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; font-size: 13px; color: var(--muted); font-family: var(--font-mono); }
+    .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #9E9EA7; margin-right: 6px; }
+    body.is-connected .status-dot { background: #22C55E; }
+    .chat-foot { margin-top: 16px; }
+    .chips { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 12px; scrollbar-width: none; }
+    .chips::-webkit-scrollbar { display: none; }
+    .chip { flex: none; padding: 6px 14px; border-radius: 999px; background: var(--accent-soft); color: var(--ink); font-size: 12px; font-weight: 500; border: none; cursor: pointer; white-space: nowrap; }
+    .composer { display: flex; gap: 8px; align-items: center; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; position: relative; }
+    .composer:focus-within { border-color: var(--accent); }
+    .composer textarea { flex: 1; background: none; border: none; outline: none; font-family: inherit; font-size: 14px; resize: none; color: var(--ink); max-height: 120px; }
+    .composer button { background: var(--accent); color: var(--on-accent); border: none; border-radius: 6px; width: 36px; height: 36px; display: grid; place-items: center; cursor: pointer; font-weight: bold; }
+    .composer button:disabled { opacity: 0.4; cursor: default; }
+    .chat-note { font-size: 11px; color: var(--muted); text-align: center; margin-top: 8px; }
+    @property --glow { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+    .composer::before { content: ""; position: absolute; inset: -1px; padding: 1.5px; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity .6s; background: conic-gradient(from var(--glow), var(--accent), var(--accent-2), var(--accent-soft), var(--accent)); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; animation: glow-spin 6s linear infinite; }
+    body.is-working .composer::before { opacity: .9; }
+    @keyframes glow-spin { to { --glow: 360deg; } }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; text-align: center; }
+    .stat-num { font-size: clamp(36px, 5vw, 64px); font-weight: 800; font-family: var(--font-display); line-height: 1.1; margin-bottom: 8px; }
+    .stat-label { font-size: 14px; color: var(--muted); font-weight: 500; }
+    .section-head { margin-bottom: 64px; }
+    .kicker { font-size: 12px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 12px; display: block; }
+    .section-title { font-family: var(--font-display); font-size: clamp(32px, 5vw, 56px); font-weight: var(--title-weight); letter-spacing: var(--title-tracking); line-height: var(--title-leading); margin-bottom: 16px; word-break: keep-all; text-wrap: balance; }
+    .section-sub { font-size: 17px; color: var(--muted); max-width: 600px; word-break: keep-all; }
+    .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 32px; }
+    .feature-card { background: var(--card); border: var(--border); border-radius: var(--radius); padding: 32px; display: flex; flex-direction: column; justify-content: space-between; }
+    .mock { height: 160px; background: var(--accent-soft); border-radius: 8px; margin-bottom: 24px; display: grid; place-items: center; font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+    .file-tag { font-family: var(--font-mono); font-size: 11px; background: var(--accent-soft); padding: 4px 8px; border-radius: 4px; display: inline-block; margin-top: 16px; }
+    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 32px; list-style: none; }
+    .step-num { font-family: var(--font-mono); font-size: 14px; color: var(--muted); margin-bottom: 12px; display: block; }
+    .step-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+    .swatch-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+    .swatch-card { padding: 24px; border-radius: var(--radius); background: var(--card); border: var(--border); }
+    .marquee { display: flex; overflow: hidden; white-space: nowrap; gap: 24px; font-family: var(--font-display); font-weight: 800; font-size: 24px; margin: 24px 0; }
+    .marquee-track { display: flex; gap: 24px; animation: marquee 25s linear infinite; }
+    @keyframes marquee { to { transform: translateX(-50%); } }
+    .cta-box { text-align: center; background: var(--card); border: var(--border); border-radius: var(--radius); padding: 80px 20px; }
+    .footer { border-top: 1px solid var(--line); padding: 64px clamp(20px, 5vw, 64px) 32px; overflow: hidden; }
+    .footer-mark { display: block; white-space: nowrap; overflow: hidden; line-height: .85; font-family: var(--font-display); font-weight: 900; font-size: 22vw; text-transform: uppercase; margin-bottom: 32px; }
+    .footer-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--muted); }
+    .toast { position: fixed; bottom: 24px; right: 24px; background: var(--ink); color: var(--on-accent); padding: 12px 20px; border-radius: 999px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; display: none; z-index: 100; box-shadow: 0 10px 30px rgba(0,0,0,.2); }
+    
+    /* Web Chat Custom Overrides */
+    #webchat .webchat__typing-indicator { display: none !important; }
+    #webchat .webchat__stacked-layout:not(.webchat__stacked-layout--from-user) .webchat__stacked-layout__status { display: none; }
+    #webchat .webchat__stacked-layout__attachment-row { margin-top: 8px !important; }
+    #webchat .webchat__stacked-layout__attachment, #webchat .webchat__stacked-layout__attachment .webchat__bubble__content { background: none !important; border: 0 !important; overflow: visible !important; }
+    #webchat .webchat__stacked-layout__content:has(.webchat__fileContent) { overflow: visible !important; }
+    #webchat .webchat__fileContent { padding: 0 !important; }
+    #webchat .webchat__fileContent__buttonLink { display: flex !important; align-items: center; gap: 12px; height: 56px; padding: 0 18px 0 12px; border-radius: var(--radius); text-decoration: none; color: var(--ink); background: var(--card); border: 1px solid var(--line); }
+    #webchat .webchat__fileContent__buttonLink::before { content: "FILE"; flex: none; padding: 5px 8px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font: 600 10.5px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .04em; }
+    #webchat a[download$=".pptx" i]::before { content: "PPTX"; } #webchat a[download$=".docx" i]::before { content: "DOCX"; } #webchat a[download$=".xlsx" i]::before { content: "XLSX"; } #webchat a[download$=".html" i]::before { content: "HTML"; }
+    #webchat .webchat__fileContent__badge { flex: 1; min-width: 0; background: none !important; padding: 0 !important; }
+    #webchat .webchat__fileContent__fileName { font: 13px ui-monospace, SFMono-Regular, Menlo, monospace !important; color: var(--ink) !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    #webchat .webchat__fileContent__downloadIcon { flex: none; box-sizing: content-box; width: 16px; height: 16px; padding: 0; fill: var(--muted); color: var(--muted); }
+    #webchat .webchat__render-markdown { word-break: keep-all; overflow-wrap: anywhere; }
+    #webchat .webchat__render-markdown a { color: var(--accent); }
+    #webchat .webchat__render-markdown table { display: block; max-width: 100%; overflow-x: auto; border-collapse: collapse; border-spacing: 0; margin: 12px 0; font-variant-numeric: tabular-nums; }
+    #webchat .webchat__render-markdown th, #webchat .webchat__render-markdown td { padding: 9px 18px 9px 0; border-bottom: 1px solid var(--line); white-space: nowrap; }
+    #webchat .webchat__render-markdown th { font-size: 12px; font-weight: 600; color: var(--muted); }
+
+    /* Orbit Styles */
+    .orbit { --r: 150px; position: relative; width: calc(var(--r) * 2); aspect-ratio: 1; margin: 48px auto; }
+    .orbit-ring { position: absolute; inset: 0; border-radius: 50%; border: 1px dashed var(--line); animation: orbit-spin 40s linear infinite; }
+    .orbit .agent { position: absolute; left: 50%; top: 50%; transform: rotate(var(--a)) translateX(var(--r)) rotate(calc(-1 * var(--a))); }
+    .orbit .agent b { position: absolute; translate: -50% -50%; white-space: nowrap; padding: 8px 12px; border-radius: 999px; font: 600 12px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--accent); background: var(--card); border: 1px solid var(--line); animation: orbit-spin 40s linear infinite reverse; }
+    .orbit .leader { position: absolute; left: 50%; top: 50%; translate: -50% -50%; width: 112px; aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; font-weight: 800; background: var(--accent); color: var(--on-accent); }
+    @keyframes orbit-spin { to { rotate: 360deg; } }
+    @media (max-width: 600px) { .orbit { --r: 100px; } .orbit .agent b { font-size: 10px; padding: 6px 9px; } .orbit .leader { width: 84px; } }
+
+    /* Design overrides for glass */
+    html[data-design="glass"] { --bg: #F5F5F7; --ink: #1D1D1F; --muted: #6E6E73; --line: rgba(0,0,0,0.1); --card: rgba(255,255,255,0.55); --accent: #1D1D1F; --accent-2: #6E5BFF; --accent-soft: rgba(255,255,255,0.8); --on-accent: #FFF; --radius: 28px; --blur: blur(24px) saturate(180%); --shadow: 0 30px 80px -30px rgba(76,70,160,0.3); --font-display: 'Instrument Serif', serif; --title-weight: 400; }
+    html[data-design="glass"] .hero-title em { background: linear-gradient(120deg, #4F6BFF, #8B5CF6 40%, #EC4899 70%, #FF7A45); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-style: italic; }
+
+    /* Design overrides for noir */
+    html[data-design="noir"] { --bg: #08090A; --ink: #F7F8F8; --muted: #8A8F98; --line: rgba(255,255,255,0.08); --card: #0E0F11; --accent: #8B8CFF; --accent-2: #3CE0B4; --accent-soft: rgba(255,255,255,0.05); --on-accent: #08090A; --radius: 16px; --font-display: 'Geist', sans-serif; }
+
+    /* Design overrides for editorial */
+    html[data-design="editorial"] { --bg: #F2EEE6; --ink: #161512; --muted: #6B665E; --line: #161512; --card: #F7F4EE; --accent: #23395B; --accent-soft: #EAE4DA; --on-accent: #FFF; --radius: 0px; --font-display: 'Hahmlet', serif; }
+
+    /* Design overrides for swiss */
+    html[data-design="swiss"] { --bg: #F4F4F1; --ink: #0B0B0B; --muted: #5E5E5A; --line: #0B0B0B; --card: #FFFFFF; --accent: #0B0B0B; --accent-2: #D4FF3A; --accent-soft: #EAEAE6; --on-accent: #FFF; --radius: 0px; --font-display: 'Inter Tight', sans-serif; }
+
+    /* Design overrides for terra */
+    html[data-design="terra"] { --bg: #EDE5D8; --ink: #2A231D; --muted: #6E6257; --line: rgba(42,35,29,0.15); --card: #F7F1E7; --accent: #C2603A; --accent-2: #7D7A45; --accent-soft: #E5DAC9; --on-accent: #FFF; --radius: 28px; --font-display: 'Gowun Batang', serif; }
+
+    /* Design overrides for bloom */
+    html[data-design="bloom"] { --bg: #FFF7F2; --ink: #1B1030; --muted: #6A5C7A; --line: rgba(27,16,48,0.1); --card: #FFFFFF; --accent: #6B2BFF; --accent-2: #FF3D7F; --accent-soft: #F0E6FF; --on-accent: #FFF; --radius: 28px; --font-display: 'Bricolage Grotesque', sans-serif; }
+
+    /* Design overrides for pop */
+    html[data-design="pop"] { --bg: #F4F4F0; --ink: #000000; --muted: #333333; --line: #000000; --card: #FFFFFF; --accent: #FF90E8; --accent-2: #FFC900; --accent-soft: #FF90E8; --on-accent: #000000; --radius: 12px; --shadow: 4px 4px 0 #000; --border: 2px solid #000; --font-display: 'Space Grotesk', sans-serif; }
+
+    /* Design overrides for luxe */
+    html[data-design="luxe"] { --bg: #0C0B0A; --ink: #EDE6DA; --muted: #9C9384; --line: rgba(201,169,110,0.32); --card: #141210; --accent: #C9A96E; --accent-soft: rgba(201,169,110,0.1); --on-accent: #0C0B0A; --radius: 2px; --font-display: 'Noto Serif KR', serif; }
+  </style>
 </head>
 <body>
-  <p id="status" role="status" aria-live="polite">채팅에 연결하는 중입니다...</p>
-  <div id="webchat" style="height: 600px"></div>
+  <div class="preview-note">🎁 진짜 디자인은 내 github.io 주소에서 열려요</div>
+  
+  <header class="nav">
+    <a href="#" class="brand">
+      <span class="brand-mark" data-copy="name">AI Creative Agent Team</span>
+      <small>Copilot Studio Multi-Agent</small>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#features">기능 소개</a></li>
+      <li><a href="#how">작동 방식</a></li>
+      <li><a href="#design">디자인 테마</a></li>
+    </ul>
+    <a href="#chat" class="nav-cta" onclick="focusChat(event)">지금 써 보기</a>
+  </header>
+
+  <main>
+    <section class="hero" id="chat">
+      <div class="hero-copy">
+        <span class="kicker" data-copy="eyebrow">Multi-Agent Workflow</span>
+        <h1 class="hero-title" data-copy="title">한 줄의 아이디어, <em>다섯 개의 결과물</em></h1>
+        <p class="hero-lead" data-copy="lead">팀장 에이전트가 전문가 다섯에게 일을 나눠, 발표자료부터 예산 분석까지 한 번에 만들어 드려요.</p>
+      </div>
+
+      <section class="chat-card">
+        <div class="chat-bar">
+          <div><span class="status-dot"></span><span data-copy="name">AI Creative Agent Team</span></div>
+          <div><a href="javascript:location.reload()" style="color:inherit; text-decoration:none;">새 대화 ↻</a></div>
+        </div>
+        <div id="webchat" role="main"></div>
+        <div class="chat-foot">
+          <div class="chips" id="example-chips">
+            <button class="chip" onclick="sendChip(this)">가을 학교 축제 기획해 줘</button>
+            <button class="chip" onclick="sendChip(this)">탄소중립 캠페인 홍보물 만들어 줘</button>
+            <button class="chip" onclick="sendChip(this)">교사 AI 연수 프로그램 제안해 줘</button>
+          </div>
+          <div class="composer">
+            <textarea id="user-input" rows="1" placeholder="무엇을 만들어 볼까요?" data-copy="placeholder"></textarea>
+            <button id="send-btn" onclick="submitMessage()" disabled>→</button>
+          </div>
+          <p class="chat-note">AI는 실수할 수 있어요. 중요한 내용은 확인하세요.</p>
+        </div>
+      </section>
+
+      <div class="hero-meta">
+        <span>Microsoft Copilot Studio</span> • 
+        <span>Claude Sonnet 5.5</span> • 
+        <span>PowerPoint</span> • 
+        <span>Word</span> • 
+        <span>Excel</span> • 
+        <span>HTML</span>
+      </div>
+    </section>
+
+    <section class="stats">
+      <div class="stats-grid">
+        <div>
+          <div class="stat-num">1</div>
+          <div class="stat-label">번의 요청으로 충분해요</div>
+        </div>
+        <div>
+          <div class="stat-num">6</div>
+          <div class="stat-label">명의 전문 에이전트 협업</div>
+        </div>
+        <div>
+          <div class="stat-num">8</div>
+          <div class="stat-label">개의 검증된 작업 매뉴얼</div>
+        </div>
+        <div>
+          <div class="stat-num">5</div>
+          <div class="stat-label">개의 완성된 산출물 파일</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="features" class="section">
+      <div class="section-head">
+        <span class="kicker">Features</span>
+        <h2 class="section-title">전문가 5명이 만드는 완벽한 결과물</h2>
+        <p class="section-sub">단 한 줄의 브리프 입력으로 발표자료, 포스터, 제안서, 웹페이지, 예산 분석까지 동시에 생성합니다.</p>
+      </div>
+      <div class="feature-grid">
+        <article class="feature-card">
+          <div>
+            <div class="mock">presentation.pptx</div>
+            <h3 class="step-title">발표자료</h3>
+            <p style="font-size:14px; color:var(--muted)">10장 내외의 핵심 슬라이드 구성과 상세한 발표자 노트를 자동으로 작성합니다.</p>
+          </div>
+          <span class="file-tag">presentation.pptx</span>
+        </article>
+        <article class="feature-card">
+          <div>
+            <div class="mock">poster.html</div>
+            <h3 class="step-title">디자인 포스터</h3>
+            <p style="font-size:14px; color:var(--muted)">브라우저에서 바로 열 수 있는 고품질 포스터로, 인쇄 및 PDF 저장에 최적화되어 있습니다.</p>
+          </div>
+          <span class="file-tag">poster.html</span>
+        </article>
+        <article class="feature-card">
+          <div>
+            <div class="mock">proposal.docx</div>
+            <h3 class="step-title">기획 제안서</h3>
+            <p style="font-size:14px; color:var(--muted)">테마 색 표지와 가독성 높은 본문 레이아웃을 갖춘 공식 문서 양식입니다.</p>
+          </div>
+          <span class="file-tag">proposal.docx</span>
+        </article>
+        <article class="feature-card">
+          <div>
+            <div class="mock">webpage.html</div>
+            <h3 class="step-title">랜딩 웹페이지</h3>
+            <p style="font-size:14px; color:var(--muted)">소개와 참가 신청을 즉시 받을 수 있는 반응형 랜딩 페이지 코드를 제공합니다.</p>
+          </div>
+          <span class="file-tag">webpage.html</span>
+        </article>
+        <article class="feature-card">
+          <div>
+            <div class="mock">budget_analysis.xlsx</div>
+            <h3 class="step-title">예산 분석</h3>
+            <p style="font-size:14px; color:var(--muted)">핵심 숫자 카드와 차트를 포함하며, 모든 합계는 정확한 수식으로 계산됩니다.</p>
+          </div>
+          <span class="file-tag">budget_analysis.xlsx</span>
+        </article>
+      </div>
+    </section>
+
+    <section id="how" class="section">
+      <div class="section-head">
+        <span class="kicker">Workflow</span>
+        <h2 class="section-title">작동 방식</h2>
+        <p class="section-sub">팀장 에이전트의 조율 하에 체계적인 단계를 거쳐 결과물이 만들어집니다.</p>
+      </div>
+      
+      <div class="orbit">
+        <div class="orbit-ring">
+          <span class="agent" style="--a:0deg"><b>ppt-agent</b></span>
+          <span class="agent" style="--a:72deg"><b>poster-agent</b></span>
+          <span class="agent" style="--a:144deg"><b>proposal-agent</b></span>
+          <span class="agent" style="--a:216deg"><b>webpage-agent</b></span>
+          <span class="agent" style="--a:288deg"><b>budget-agent</b></span>
+        </div>
+        <div class="leader">팀장</div>
+      </div>
+
+      <ol class="steps" style="margin-top: 64px;">
+        <li>
+          <span class="step-num">01 — 브리프</span>
+          <h3 class="step-title">기획서 정리</h3>
+          <p style="font-size:14px; color:var(--muted)">요청사항을 명확한 한 장짜리 기획서로 정리하고 최적의 컬러 테마를 선정합니다.</p>
+        </li>
+        <li>
+          <span class="step-num">02 — 예산 기준</span>
+          <h3 class="step-title">기준표 설정</h3>
+          <p style="font-size:14px; color:var(--muted)">budget-agent가 전체 예산 기준표를 마련해 모든 금액의 일관성을 맞춥니다.</p>
+        </li>
+        <li>
+          <span class="step-num">03 — 원고 작성</span>
+          <h3 class="step-title">전문가 협업</h3>
+          <p style="font-size:14px; color:var(--muted)">각 분야별 전문가들이 동일한 브리프를 바탕으로 전문 원고를 작성합니다.</p>
+        </li>
+        <li>
+          <span class="step-num">04 — 파일 생성</span>
+          <h3 class="step-title">통합 패키징</h3>
+          <p style="font-size:14px; color:var(--muted)">디자인 규칙에 맞추어 5개의 완성된 파일을 한 번에 첨부하여 전달합니다.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="design" class="section">
+      <div class="section-head">
+        <span class="kicker">Color Themes</span>
+        <h2 class="section-title">주제별 맞춤 컬러 테마</h2>
+        <p class="section-sub">프로젝트 성격에 맞는 5가지 리퀴드 글래스 테마가 결과물에 적용됩니다.</p>
+      </div>
+      <div class="swatch-grid">
+        <div class="swatch-card"><h4 style="font-weight:700; margin-bottom:8px">스카이</h4><p style="font-size:13px; color:var(--muted)">교육 및 일반 행사</p></div>
+        <div class="swatch-card"><h4 style="font-weight:700; margin-bottom:8px">팝</h4><p style="font-size:13px; color:var(--muted)">IT 캠페인 및 축제</p></div>
+        <div class="swatch-card"><h4 style="font-weight:700; margin-bottom:8px">네이비</h4><p style="font-size:13px; color:var(--muted)">공공 보고서 및 정책</p></div>
+        <div class="swatch-card"><h4 style="font-weight:700; margin-bottom:8px">그린</h4><p style="font-size:13px; color:var(--muted)">환경 및 ESG</p></div>
+        <div class="swatch-card"><h4 style="font-weight:700; margin-bottom:8px">코럴</h4><p style="font-size:13px; color:var(--muted)">가족 및 복지</p></div>
+      </div>
+    </section>
+
+    <div class="marquee">
+      <div class="marquee-track">
+        <span>가을 학교 축제</span> • <span>탄소중립 캠페인</span> • <span>교사 AI 연수</span> • <span>신제품 런칭 행사</span> • <span>진로 체험 주간</span> • 
+        <span>가을 학교 축제</span> • <span>탄소중립 캠페인</span> • <span>교사 AI 연수</span> • <span>신제품 런칭 행사</span> • <span>진로 체험 주간</span> •
+      </div>
+    </div>
+
+    <section class="cta">
+      <div class="cta-box">
+        <h2 class="section-title" data-copy="cta" style="margin-bottom:24px">지금 바로 팀과 함께 시작하세요</h2>
+        <a href="#chat" class="nav-cta" onclick="focusChat(event)" style="padding: 14px 28px; font-size:15px;">대화창으로 이동하기</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span class="footer-mark" data-copy="name">AI Creative</span>
+    <div class="footer-row">
+      <div>AI Creative Agent Team · Copilot Studio Multi-Agent · © 2026</div>
+      <div id="footer-design-key"></div>
+    </div>
+  </footer>
+
+  <button class="toast" id="toast-btn" onclick="focusChat(event)">팀이 작업 중...</button>
+
   <script src="https://cdn.botframework.com/botframework-webchat/4.18.0/webchat.js"></script>
   <script>
     const BROKER_URL = "https://dl-broker-juwon-4jt3z.azurewebsites.net/api/directlineToken";
     const SEALED = "GPEwq8tl8XJJlXfyQubjfve9w1n8HAPv6btxUwOo6RCkfPEvOjbzFF27roP6AHVD8ig_JYtbV5fe5nLi6c6Vet1oWkes-bBInmhbTnIa4OczvHc4C_34_wqJyky6mmuu9XoEgSAsFUQvBa8Kvz50wSJiS230GetIn0WpDXU_Pj5AZlMN6GB4Bdvh4I56VyIrri_Uw-5MQLFLN43w7gTPCaoBtIeObq84YSRLplvt2jd6kjY8nP0WLdvdg5lVWlYNE8leICx35E4mHkEUzPww8ybW95jOqx6cZsJOKTTNrVVJ9gQpFK5wHqXJ1nlzjGTUjKDLlppZ8UtaS8oHg51t-BnTYtxF9YzXBdEN19WN4IAD6YOAG8d54ogzEP_V7PRUxpjscKzbPFDVRLxAHF4QjKXszdaXzvapuDmq9q4iMoiUBPuWdW_Wm56cdtPs0sn7kDMqVpyIl4IW6dLSf9iSdvqn2ehP57TA6nqXe6B4DkpWXK06xk0kAIpNmyYH1STHYwSf5d6IYQEHuwsNBILxyMz_p9IysAcXsf2FzG5RB2BouO2Uhx8FrcjjSwQchsu_j9Z_o1ItCqll9YzAJm3LVLPV9kVPywwxRhd7mI7MQPrwiY_1sYWZqMlUa3v_umZ9h4vIXq0ZCgBco2nPvOFq";
-    const status = document.getElementById("status");
+    
+    const COPY = {
+      glass: { name: "AI Creative", eyebrow: "Liquid Glass Agent", title: "한 줄의 아이디어, <em>다섯 개의 결과물</em>", lead: "애플 비전 프로 감성의 리퀴드 글래스 인터페이스로 전문가 에이전트와 대화하세요.", placeholder: "어떤 프로젝트를 시작할까요?", cta: "지금 바로 아이디어를 실현하세요" },
+      noir: { name: "CreativeOS", eyebrow: "Dark Grid System", title: "아이디어를 <em>배포하세요</em>", lead: "정교한 다크 그리드 환경에서 멀티 에이전트 팀이 즉시 결과물을 빌드합니다.", placeholder: "프롬프트를 입력하세요...", cta: "지금 시작하기" },
+      editorial: { name: "Vol. 01", eyebrow: "Editorial Review", title: "생각을 담아내는 <em>지면</em>", lead: "잡지 1면을 넘기듯 차분하게 기획안과 결과물을 확인하는 에디토리얼 공간입니다.", placeholder: "기획에 대해 적어주세요...", cta: "첫 페이지 펼치기" },
+      swiss: { name: "AGENT.01", eyebrow: "Swiss Acid", title: "빠르고 정확한 <em>결과물</em>", lead: "국제주의 타이포그래피와 애시드 라임 컬러로 구성된 초고속 크리에이티브 에이전트.", placeholder: "요청사항 입력...", cta: "시작하기" },
+      terra: { name: "Atelier", eyebrow: "Organic Terra", title: "따뜻한 시선으로 <em>만드는 기획</em>", lead: "어스 톤의 편안한 인터페이스 속에서 팀원들이 정성스럽게 서류를 준비합니다.", placeholder: "어떤 이야기를 나누고 싶나요?", cta: "아틀리에 입장하기" },
+      bloom: { name: "BLOOOM", eyebrow: "Fluid Poster", title: "즐겁게 완성하는 <em>크리에이티브</em>", lead: "유체 그라데이션과 스티커 포인트로 가득한 생동감 넘치는 에이전트 팀.", placeholder: "재미있는 아이디어를 던져주세요!", cta: "지금 바로 시작" },
+      pop: { name: "POPAGENT", eyebrow: "Neo Brutal", title: "던지면 <em>바로 만들어</em> 드려요!", lead: "네오 브루털리즘 스타일의 강력하고 직관적인 멀티 에이전트 작업 공간.", placeholder: "무엇을 만들까요? 적어주세요!", cta: "출발하기" },
+      luxe: { name: "L'AGENCE", eyebrow: "Dark Luxury", title: "한 줄의 생각, <em>다섯 개의 작품</em>", lead: "하이엔드 럭셔리 브랜드 감성으로 완성되는 정제된 비즈니스 산출물.", placeholder: "품격 있는 프로젝트를 제안해 주세요...", cta: "작품 만들기" }
+    };
 
-    function showError(message) {
-      status.hidden = false;
-      status.textContent = message;
+    // Apply Copy & Design Key
+    const currentDesign = document.documentElement.getAttribute("data-design");
+    if (currentDesign && COPY[currentDesign]) {
+      const c = COPY[currentDesign];
+      document.querySelectorAll("[data-copy]").forEach(el => {
+        const key = el.getAttribute("data-copy");
+        if (c[key]) el.innerHTML = c[key];
+      });
+      const dk = document.getElementById("footer-design-key");
+      if (dk) dk.textContent = "🎲 " + currentDesign;
+    }
+
+    // Fit giant footer wordmark
+    function fitMark() {
+      const m = document.querySelector(".footer-mark");
+      if (!m) return;
+      m.style.fontSize = "22vw";
+      const r = m.clientWidth / m.scrollWidth;
+      if (r < 1) m.style.fontSize = 22 * r * 0.98 + "vw";
+    }
+    document.fonts.ready.then(fitMark);
+    addEventListener("resize", fitMark);
+
+    // Chat logic & WebChat initialization
+    const statusEl = document.querySelector(".status-dot").parentElement;
+    const inputEl = document.getElementById("user-input");
+    const sendBtn = document.getElementById("send-btn");
+    let storeInstance = null;
+
+    function focusChat(e) {
+      if (e) e.preventDefault();
+      const card = document.querySelector(".chat-card");
+      window.scrollTo({ top: card.getBoundingClientRect().top + window.scrollY - 88, behavior: "smooth" });
+      inputEl.focus({ preventScroll: true });
+    }
+
+    function sendChip(btn) {
+      inputEl.value = btn.textContent;
+      submitMessage();
+    }
+
+    inputEl.addEventListener("input", function() {
+      this.style.height = "auto";
+      this.style.height = Math.min(this.scrollHeight, 120) + "px";
+      sendBtn.disabled = !this.value.trim();
+    });
+
+    inputEl.addEventListener("keydown", function(e) {
+      if (e.key === "Enter" && !e.shiftKey && !e.isComposing && e.keyCode !== 229) {
+        e.preventDefault();
+        submitMessage();
+      }
+    });
+
+    function submitMessage() {
+      const text = inputEl.value.trim();
+      if (!text || !storeInstance) return;
+      document.body.classList.add("is-started", "is-working");
+      storeInstance.dispatch({
+        type: "WEB_CHAT/SEND_MESSAGE",
+        payload: { text }
+      });
+      inputEl.value = "";
+      inputEl.style.height = "auto";
+      sendBtn.disabled = true;
     }
 
     async function connect() {
-      if (!window.WebChat ||
-          typeof WebChat.createDirectLine !== "function" ||
-          typeof WebChat.renderWebChat !== "function") {
-        showError("채팅 구성 요소를 불러오지 못했습니다. 네트워크를 확인한 뒤 새로고침해 주세요.");
-        return;
-      }
-
+      if (!window.WebChat || typeof WebChat.createDirectLine !== "function") return;
+      
       let response;
       try {
-        // Keep this a simple CORS request; the broker may not support preflight.
         response = await fetch(BROKER_URL, {
           method: "POST",
           body: JSON.stringify({ sealed: SEALED })
         });
       } catch {
-        showError("서버에 연결하지 못했습니다. 네트워크와 배포 주소를 확인해 주세요.");
         return;
       }
-      if (!response.ok) {
-        showError("서버가 연결 요청을 처리하지 못했습니다 (HTTP " + response.status + ").");
-        return;
-      }
+      if (!response.ok) return;
 
       let data;
       try {
         data = await response.json();
       } catch {
-        showError("서버 응답을 읽을 수 없습니다. 잠시 후 다시 시도해 주세요.");
         return;
       }
-      if (!data || typeof data.token !== "string" || !data.token.trim()) {
-        showError("서버에서 연결 토큰을 받지 못했습니다. 암호와 배포 주소를 확인해 주세요.");
-        return;
-      }
+      if (!data || typeof data.token !== "string") return;
 
       try {
         const directLine = WebChat.createDirectLine({ token: data.token });
-        status.hidden = true;
+        document.body.classList.add("is-connected");
+        
+        storeInstance = WebChat.createStore({}, ({ dispatch }) => next => action => {
+          if (action.type === "DIRECT_LINE/INCOMING_ACTIVITY") {
+            const activity = action.payload.activity;
+            if (activity && activity.from && activity.from.role !== "user") {
+              if (activity.type === "message") {
+                document.body.classList.remove("is-working");
+              }
+            }
+          }
+          return next(action);
+        });
+
+        const v = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+        WebChat.renderWebChat({
+          directLine,
+          store: storeInstance,
+          locale: "ko-KR",
+          styleOptions: {
+            hideSendBox: true,
+            rootHeight: "100%",
+            backgroundColor: "transparent",
+            primaryFont: v("--font-body"),
+            bubbleBackground: "transparent",
+            bubbleBorderWidth: 0,
+            bubbleTextColor: v("--ink"),
+            bubbleMaxWidth: 720,
+            bubbleMinWidth: 0,
+            bubbleFromUserBackground: v("--accent-soft"),
+            bubbleFromUserTextColor: v("--ink"),
+            bubbleFromUserBorderWidth: 0,
+            bubbleFromUserBorderRadius: parseInt(v("--radius")) || 0,
+            subtle: v("--muted"),
+            accent: v("--accent")
+          }
+        }, document.getElementById("webchat"));
+
         directLine.postActivity({
           type: "event", name: "startConversation", from: { id: "user" }
-        }).subscribe({
-          error: () => showError("첫 인사를 요청하지 못했습니다. 채팅창에 메시지를 입력해 주세요.")
-        });
-        WebChat.renderWebChat({ directLine, locale: "ko-KR" }, document.getElementById("webchat"));
+        }).subscribe({});
+
+        sendBtn.disabled = false;
       } catch {
-        showError("채팅을 시작하지 못했습니다. 새로고침 후 다시 시도해 주세요.");
+        // error handling handled silently for seamless experience
       }
     }
 
